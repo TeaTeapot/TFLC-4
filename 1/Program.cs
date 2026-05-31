@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -23,15 +24,77 @@ namespace TextEditor
         {
             new Regex(@"^\d{16}$", RegexOptions.Multiline),
             new Regex(@"^[a-zA-Zа-яА-Я0-9!@#$%^&()+{};,_.-]{1,255}\.(docx|png|cs|txt|md|jpg|cpp|py|exe|pptx)$", RegexOptions.Multiline),
-            new Regex(@"^10\.\d{4,}\/[a-zA-Z0-9_.\-~+()\/,;:=]+$", RegexOptions.Multiline)
+            null
         };
 
         private readonly string[] searchTypeNames = new string[]
         {
             "16 цифр подряд",
             "Имя файла (1-255 символов + расширение)",
-            "DOI 10.xxxx/..."
+            "DOI 10.xxxx/... (автомат)"
         };
+
+        private static class DoiDfa
+        {
+            private enum State { q0, q1, q2, q3, q4, q5, q6, q7, q8, q9, Dead }
+
+            private static bool IsAllowedSuffix(char c)
+            {
+                return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+                       (c >= '0' && c <= '9') || "_.-~+()/,;:=".IndexOf(c) >= 0;
+            }
+
+            private static State Transition(State state, char c)
+            {
+                switch (state)
+                {
+                    case State.q0: return c == '1' ? State.q1 : State.Dead;
+                    case State.q1: return c == '0' ? State.q2 : State.Dead;
+                    case State.q2: return c == '.' ? State.q3 : State.Dead;
+                    case State.q3: return (c >= '0' && c <= '9') ? State.q4 : State.Dead;
+                    case State.q4: return (c >= '0' && c <= '9') ? State.q5 : State.Dead;
+                    case State.q5: return (c >= '0' && c <= '9') ? State.q6 : State.Dead;
+                    case State.q6: return (c >= '0' && c <= '9') ? State.q7 : State.Dead;
+                    case State.q7:
+                        if (c >= '0' && c <= '9') return State.q7;
+                        if (c == '/') return State.q8;
+                        return State.Dead;
+                    case State.q8: return IsAllowedSuffix(c) ? State.q9 : State.Dead;
+                    case State.q9: return IsAllowedSuffix(c) ? State.q9 : State.Dead;
+                    default: return State.Dead;
+                }
+            }
+
+            public static List<(string Value, int Index, int Length)> FindMatches(string text)
+            {
+                var results = new List<(string Value, int Index, int Length)>();
+                int start = 0;
+
+                while (start <= text.Length)
+                {
+                    int end = text.IndexOf('\n', start);
+                    if (end < 0) end = text.Length;
+
+                    int lineEnd = end;
+                    if (lineEnd > start && text[lineEnd - 1] == '\r')
+                        lineEnd--;
+
+                    string line = text.Substring(start, lineEnd - start);
+
+                    State state = State.q0;
+                    foreach (char c in line)
+                        state = Transition(state, c);
+
+                    if (state == State.q9)
+                        results.Add((line, start, line.Length));
+
+                    if (end >= text.Length) break;
+                    start = end + 1;
+                }
+
+                return results;
+            }
+        }
 
         public MainForm()
         {
@@ -144,7 +207,7 @@ namespace TextEditor
             {
                 DropDownStyle = ComboBoxStyle.DropDownList,
                 Location = new Point(10, 10),
-                Width = 220,
+                Width = 260,
                 Font = new Font("Segoe UI", 9)
             };
             comboBoxSearchType.Items.AddRange(searchTypeNames);
@@ -153,7 +216,7 @@ namespace TextEditor
             buttonSearch = new Button
             {
                 Text = "Найти",
-                Location = new Point(240, 9),
+                Location = new Point(280, 9),
                 Width = 80,
                 Height = 25,
                 BackColor = Color.SteelBlue,
@@ -165,7 +228,7 @@ namespace TextEditor
             labelMatchCount = new Label
             {
                 Text = "Совпадений: 0",
-                Location = new Point(335, 12),
+                Location = new Point(375, 12),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 9, FontStyle.Bold)
             };
@@ -210,49 +273,79 @@ namespace TextEditor
             }
 
             int selectedIndex = comboBoxSearchType.SelectedIndex;
-            Regex regex = regexes[selectedIndex];
-
-            var matches = regex.Matches(text);
             dataGridViewResults.Rows.Clear();
 
-            if (matches.Count == 0)
+            if (selectedIndex == 2)
             {
-                labelMatchCount.Text = "Совпадений: 0";
-                MessageBox.Show("Совпадений не найдено.", "Поиск",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
+                var matches = DoiDfa.FindMatches(text);
 
-            foreach (Match match in matches)
-            {
-                int lineNumber = 1;
-                int charIndex = 0;
-                int currentPos = 0;
-
-                for (int i = 0; i < text.Length && currentPos < match.Index; i++)
+                if (matches.Count == 0)
                 {
-                    if (text[i] == '\n')
-                    {
-                        lineNumber++;
-                        charIndex = 0;
-                    }
-                    else
-                    {
-                        charIndex++;
-                    }
-                    currentPos++;
+                    labelMatchCount.Text = "Совпадений: 0";
+                    MessageBox.Show("Совпадений не найдено.", "Поиск",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
                 }
 
-                dataGridViewResults.Rows.Add(
-                    match.Value,
-                    $"Строка {lineNumber}, символ {charIndex + 1}",
-                    match.Length
-                );
+                foreach (var (value, index, length) in matches)
+                {
+                    int lineNumber = 1;
+                    int charIndex = 0;
+                    int currentPos = 0;
+
+                    for (int i = 0; i < text.Length && currentPos < index; i++)
+                    {
+                        if (text[i] == '\n') { lineNumber++; charIndex = 0; }
+                        else { charIndex++; }
+                        currentPos++;
+                    }
+
+                    dataGridViewResults.Rows.Add(
+                        value,
+                        $"Строка {lineNumber}, символ {charIndex + 1}",
+                        length
+                    );
+                }
+
+                labelMatchCount.Text = $"Совпадений: {matches.Count}";
+                ResetHighlighting();
             }
+            else
+            {
+                Regex regex = regexes[selectedIndex];
+                var matches = regex.Matches(text);
 
-            labelMatchCount.Text = $"Совпадений: {matches.Count}";
+                if (matches.Count == 0)
+                {
+                    labelMatchCount.Text = "Совпадений: 0";
+                    MessageBox.Show("Совпадений не найдено.", "Поиск",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
 
-            ResetHighlighting();
+                foreach (Match match in matches)
+                {
+                    int lineNumber = 1;
+                    int charIndex = 0;
+                    int currentPos = 0;
+
+                    for (int i = 0; i < text.Length && currentPos < match.Index; i++)
+                    {
+                        if (text[i] == '\n') { lineNumber++; charIndex = 0; }
+                        else { charIndex++; }
+                        currentPos++;
+                    }
+
+                    dataGridViewResults.Rows.Add(
+                        match.Value,
+                        $"Строка {lineNumber}, символ {charIndex + 1}",
+                        match.Length
+                    );
+                }
+
+                labelMatchCount.Text = $"Совпадений: {matches.Count}";
+                ResetHighlighting();
+            }
         }
 
         private void DataGridViewResults_SelectionChanged(object sender, EventArgs e)
@@ -270,7 +363,6 @@ namespace TextEditor
             if (index >= 0)
             {
                 ResetHighlighting();
-
                 textBoxEditor.Select(index, selectedMatch.Length);
                 textBoxEditor.Focus();
                 textBoxEditor.SelectionBackColor = Color.Yellow;
@@ -349,10 +441,7 @@ namespace TextEditor
 
         private void OnFileExit(object sender, EventArgs e)
         {
-            if (ConfirmSaveChanges())
-            {
-                this.Close();
-            }
+            if (ConfirmSaveChanges()) this.Close();
         }
 
         private bool ConfirmSaveChanges()
@@ -364,28 +453,14 @@ namespace TextEditor
                     "Подтверждение",
                     MessageBoxButtons.YesNoCancel,
                     MessageBoxIcon.Question);
-                if (result == DialogResult.Yes)
-                {
-                    OnFileSave(this, EventArgs.Empty);
-                    return true;
-                }
-                else if (result == DialogResult.No)
-                {
-                    return true;
-                }
+                if (result == DialogResult.Yes) { OnFileSave(this, EventArgs.Empty); return true; }
+                else if (result == DialogResult.No) return true;
                 return false;
             }
             return true;
         }
 
-        private void OnEditUndo(object sender, EventArgs e)
-        {
-            if (textBoxEditor.CanUndo)
-            {
-                textBoxEditor.Undo();
-            }
-        }
-
+        private void OnEditUndo(object sender, EventArgs e) { if (textBoxEditor.CanUndo) textBoxEditor.Undo(); }
         private void OnEditCut(object sender, EventArgs e) => textBoxEditor.Cut();
         private void OnEditCopy(object sender, EventArgs e) => textBoxEditor.Copy();
         private void OnEditPaste(object sender, EventArgs e) => textBoxEditor.Paste();
@@ -402,69 +477,29 @@ namespace TextEditor
 МЕНЮ ""ФАЙЛ""
 ===========================================
 • Создать - создает новый пустой документ
-  Если текущий документ содержит несохраненные изменения,
-  программа предложит сохранить их перед созданием нового.
-
 • Открыть - открывает существующий текстовый файл
-  Поддерживаемые форматы: .txt и любые другие текстовые файлы.
-  Перед открытием проверяет наличие несохраненных изменений.
-
 • Сохранить - сохраняет текущий документ
-  Если файл еще не был сохранен, открывается диалог
-  для указания имени и расположения файла.
-
 • Сохранить как - сохраняет документ с новым именем
-  Всегда открывает диалог выбора файла для сохранения.
-
 • Выход - закрывает программу
-  При наличии несохраненных изменений предлагает их сохранить.
 
 ===========================================
 МЕНЮ ""ПРАВКА""
 ===========================================
 • Отменить - отменяет последнее действие
-  Работает для операций ввода, удаления, вставки текста.
-
-• Вырезать - удаляет выделенный текст и копирует его в буфер обмена
-• Копировать - копирует выделенный текст в буфер обмена
-• Вставить - вставляет текст из буфера обмена в текущую позицию курсора
-• Удалить - удаляет выделенный текст без копирования в буфер обмена
-• Выделить все - выделяет весь текст в области редактирования
+• Вырезать / Копировать / Вставить / Удалить / Выделить все
 
 ===========================================
 ПОИСК ПО РЕГУЛЯРНЫМ ВЫРАЖЕНИЯМ
 ===========================================
 В нижней панели доступны три типа поиска:
-1. 16 цифр подряд - находит строки, состоящие ровно из 16 цифр
-2. Имя файла - находит имена файлов с допустимыми расширениями
-3. DOI 10.xxxx/... - находит идентификаторы DOI формата 10.xxxx/...
+1. 16 цифр подряд - строки из ровно 16 цифр (полис ОМС)
+2. Имя файла - имена файлов с допустимыми расширениями
+3. DOI 10.xxxx/... - идентификаторы DOI (реализован через ДКА)
 
-Результаты отображаются в таблице с указанием позиции и длины.
-При выборе строки в таблице соответствующая подстрока подсвечивается желтым.
+Результаты отображаются в таблице с позицией и длиной.
+При выборе строки подстрока подсвечивается жёлтым.";
 
-===========================================
-МЕНЮ ""СПРАВКА""
-===========================================
-• Вызов справки - открывает данное окно справки
-• О программе - показывает информацию о версии и авторе
-
-===========================================
-ПАНЕЛЬ ИНСТРУМЕНТОВ
-===========================================
-Панель инструментов содержит кнопки для быстрого доступа
-к наиболее часто используемым функциям.
-
-===========================================
-ИНТЕРФЕЙС ПРОГРАММЫ
-===========================================
-Программа разделена на три основные области:
-1. Верхняя область - редактирование текста (RichTextBox)
-2. Средняя область - вывод результатов языкового процессора
-3. Нижняя область - поиск по регулярным выражениям
-
-Размер областей можно изменять, перетаскивая разделитель.";
-
-            MessageBox.Show(helpText, "Справка - Реализованные функции",
+            MessageBox.Show(helpText, "Справка",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
@@ -472,9 +507,8 @@ namespace TextEditor
         {
             MessageBox.Show(
                 "Текстовый редактор v2.0\n" +
-                "Языковой процессор (будущая версия)\n" +
-                "Добавлен поиск по регулярным выражениям\n" +
-                "Подсветка найденных фрагментов\n" +
+                "Поиск по регулярным выражениям\n" +
+                "Задача 3 (DOI): реализация через граф ДКА\n" +
                 "(c) 2026",
                 "О программе",
                 MessageBoxButtons.OK,

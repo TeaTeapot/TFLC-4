@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="480" viewBox="0 0 1400 480" font-family="Georgia,serif">
+<defs>
+  <marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+    <polygon points="0 0, 10 3.5, 0 7" fill="#1e40af"/>
+  </marker>
+  <marker id="arr_red" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+    <polygon points="0 0, 10 3.5, 0 7" fill="#b91c1c"/>
+  </marker>
+  <marker id="arr_grn" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+    <polygon points="0 0, 10 3.5, 0 7" fill="#15803d"/>
+  </marker>
+  <marker id="arr_pur" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+    <polygon points="0 0, 10 3.5, 0 7" fill="#7e22ce"/>
+  </marker>
+</defs>
+<rect width="1400" height="480" fill="#f8fafc" rx="12"/>
+<text x="700" y="30" text-anchor="middle" font-size="17" font-weight="bold" fill="#1e293b">ДКА поиска идентификаторов DOI (Задача 3)</text>
+<line x1="20" y1="180" x2="45" y2="180" stroke="#1e40af" stroke-width="2.5" marker-end="url(#arr)"/>
+<text x="20" y="172" font-size="12" fill="#1e40af">старт</text>
+<line x1="113.0" y1="180.0" x2="182.0" y2="180.0" stroke="#1e40af" stroke-width="2" marker-end="url(#arr)"/>
+<text x="147.5" y="167.0" text-anchor="middle" font-size="13" fill="#1e40af">'1'</text>
+<line x1="248.0" y1="180.0" x2="317.0" y2="180.0" stroke="#1e40af" stroke-width="2" marker-end="url(#arr)"/>
+<text x="282.5" y="167.0" text-anchor="middle" font-size="13" fill="#1e40af">'0'</text>
+<line x1="383.0" y1="180.0" x2="452.0" y2="180.0" stroke="#1e40af" stroke-width="2" marker-end="url(#arr)"/>
+<text x="417.5" y="167.0" text-anchor="middle" font-size="13" fill="#1e40af">'.'</text>
+<line x1="518.0" y1="180.0" x2="587.0" y2="180.0" stroke="#15803d" stroke-width="2" marker-end="url(#arr_grn)"/>
+<text x="552.5" y="167.0" text-anchor="middle" font-size="13" fill="#15803d">[0-9]</text>
+<line x1="653.0" y1="180.0" x2="722.0" y2="180.0" stroke="#15803d" stroke-width="2" marker-end="url(#arr_grn)"/>
+<text x="687.5" y="167.0" text-anchor="middle" font-size="13" fill="#15803d">[0-9]</text>
+<line x1="788.0" y1="180.0" x2="857.0" y2="180.0" stroke="#15803d" stroke-width="2" marker-end="url(#arr_grn)"/>
+<text x="822.5" y="167.0" text-anchor="middle" font-size="13" fill="#15803d">[0-9]</text>
+<line x1="923.0" y1="180.0" x2="992.0" y2="180.0" stroke="#15803d" stroke-width="2" marker-end="url(#arr_grn)"/>
+<text x="957.5" y="167.0" text-anchor="middle" font-size="13" fill="#15803d">[0-9]</text>
+<line x1="1058.0" y1="180.0" x2="1127.0" y2="180.0" stroke="#1e40af" stroke-width="2" marker-end="url(#arr)"/>
+<text x="1092.5" y="167.0" text-anchor="middle" font-size="13" fill="#1e40af">'/'</text>
+<line x1="1193.0" y1="180.0" x2="1277.0" y2="180.0" stroke="#7e22ce" stroke-width="2" marker-end="url(#arr_pur)"/>
+<text x="1235.0" y="167.0" text-anchor="middle" font-size="13" fill="#7e22ce">[S]</text>
+<path d="M1006.9,152.6 Q1025,100.8 1043.2,152.6" fill="none" stroke="#15803d" stroke-width="2" marker-end="url(#arr_grn)"/>
+<text x="1025" y="84.8" text-anchor="middle" font-size="13" font-style="italic" fill="#15803d">[0-9]</text>
+<path d="M1291.8,152.6 Q1310,100.8 1328.2,152.6" fill="none" stroke="#7e22ce" stroke-width="2" marker-end="url(#arr_pur)"/>
+<text x="1310" y="84.8" text-anchor="middle" font-size="13" font-style="italic" fill="#7e22ce">[S]</text>
+<path d="M601.9,397.4 Q620,449.2 638.1,397.4" fill="none" stroke="#b91c1c" stroke-width="2" marker-end="url(#arr_red)"/>
+<text x="620" y="465.2" text-anchor="middle" font-size="13" font-style="italic" fill="#b91c1c">*</text>
+<path d="M103.8,202.8 Q200,295 587.5,364.2" fill="none" stroke="#b91c1c" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#arr_red)"/>
+<text x="254.8" y="289.3" text-anchor="middle" font-size="12" fill="#b91c1c">иначе</text>
+<path d="M350.0,213.0 Q350,295 588.2,361.2" fill="none" stroke="#b91c1c" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#arr_red)"/>
+<text x="429.6" y="291.0" text-anchor="middle" font-size="12" fill="#b91c1c">иначе</text>
+<path d="M1001.7,203.3 Q900,305 652.1,362.5" fill="none" stroke="#b91c1c" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#arr_red)"/>
+<text x="878.5" y="294.0" text-anchor="middle" font-size="12" fill="#b91c1c">иначе</text>
+<path d="M1139.6,205.9 Q1050,320 652.8,366.2" fill="none" stroke="#b91c1c" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#arr_red)"/>
+<text x="993.1" y="303.0" text-anchor="middle" font-size="12" fill="#b91c1c">иначе</text>
+<text x="700" y="430" text-anchor="middle" font-size="11.5" fill="#64748b" font-style="italic">* Все прочие переходы ведут в q_ош (ловушка). Штриховые стрелки показаны для избранных состояний.</text>
+<text x="700" y="450" text-anchor="middle" font-size="11.5" fill="#7e22ce" font-weight="bold">[S] = [a-zA-Z0-9_.‒~+()/,;:=]</text>
+<circle cx="80" cy="180" r="33" fill="#dbeafe" stroke="#1e40af" stroke-width="2.2"/>
+<text x="80" y="185" text-anchor="middle" font-size="15" font-weight="bold" fill="#1e40af">q₀</text>
+<circle cx="215" cy="180" r="33" fill="#dbeafe" stroke="#1e40af" stroke-width="2.2"/>
+<text x="215" y="185" text-anchor="middle" font-size="15" font-weight="bold" fill="#1e40af">q₁</text>
+<circle cx="350" cy="180" r="33" fill="#dbeafe" stroke="#1e40af" stroke-width="2.2"/>
+<text x="350" y="185" text-anchor="middle" font-size="15" font-weight="bold" fill="#1e40af">q₂</text>
+<circle cx="485" cy="180" r="33" fill="#dbeafe" stroke="#1e40af" stroke-width="2.2"/>
+<text x="485" y="185" text-anchor="middle" font-size="15" font-weight="bold" fill="#1e40af">q₃</text>
+<circle cx="620" cy="180" r="33" fill="#dbeafe" stroke="#1e40af" stroke-width="2.2"/>
+<text x="620" y="185" text-anchor="middle" font-size="15" font-weight="bold" fill="#1e40af">q₄</text>
+<circle cx="755" cy="180" r="33" fill="#dbeafe" stroke="#1e40af" stroke-width="2.2"/>
+<text x="755" y="185" text-anchor="middle" font-size="15" font-weight="bold" fill="#1e40af">q₅</text>
+<circle cx="890" cy="180" r="33" fill="#dbeafe" stroke="#1e40af" stroke-width="2.2"/>
+<text x="890" y="185" text-anchor="middle" font-size="15" font-weight="bold" fill="#1e40af">q₆</text>
+<circle cx="1025" cy="180" r="33" fill="#dbeafe" stroke="#1e40af" stroke-width="2.2"/>
+<text x="1025" y="185" text-anchor="middle" font-size="15" font-weight="bold" fill="#1e40af">q₇</text>
+<circle cx="1160" cy="180" r="33" fill="#dbeafe" stroke="#1e40af" stroke-width="2.2"/>
+<text x="1160" y="185" text-anchor="middle" font-size="15" font-weight="bold" fill="#1e40af">q₈</text>
+<circle cx="1310" cy="180" r="33" fill="#fef9c3" stroke="#7e22ce" stroke-width="3"/>
+<circle cx="1310" cy="180" r="27" fill="none" stroke="#7e22ce" stroke-width="1.8"/>
+<text x="1310" y="185" text-anchor="middle" font-size="15" font-weight="bold" fill="#7e22ce">q₉</text>
+<circle cx="620" cy="370" r="33" fill="#fee2e2" stroke="#b91c1c" stroke-width="2.2"/>
+<text x="620" y="375" text-anchor="middle" font-size="15" font-weight="bold" fill="#b91c1c">q_ош</text>
+<text x="80" y="227" text-anchor="middle" font-size="11" fill="#1e3a8a">старт</text>
+<text x="215" y="227" text-anchor="middle" font-size="11" fill="#1e3a8a">'1'</text>
+<text x="350" y="227" text-anchor="middle" font-size="11" fill="#1e3a8a">'10'</text>
+<text x="485" y="227" text-anchor="middle" font-size="11" fill="#1e3a8a">'10.'</text>
+<text x="620" y="227" text-anchor="middle" font-size="11" fill="#1e3a8a">d₁</text>
+<text x="755" y="227" text-anchor="middle" font-size="11" fill="#1e3a8a">d₂</text>
+<text x="890" y="227" text-anchor="middle" font-size="11" fill="#1e3a8a">d₃</text>
+<text x="1025" y="227" text-anchor="middle" font-size="11" fill="#1e3a8a">d₄₊</text>
+<text x="1160" y="227" text-anchor="middle" font-size="11" fill="#1e3a8a">суффикс</text>
+<text x="1310" y="227" text-anchor="middle" font-size="11" fill="#7e22ce">финал</text>
+<text x="620" y="417" text-anchor="middle" font-size="11" fill="#b91c1c">ловушка</text>
+</svg>

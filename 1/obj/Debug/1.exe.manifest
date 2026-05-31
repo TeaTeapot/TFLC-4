@@ -42,24 +42,24 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="1.exe" size="23496">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="1.exe" size="21960">
       <assemblyIdentity name="1" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>IJGHoVFnBsjYv4sF9ZnhO3jsAJEUVC1T5xfl2vaunaY=</dsig:DigestValue>
+        <dsig:DigestValue>d1JKHx1R3/89y7mdvpXPfWBv/xi+FytkkIl9d+WBm6w=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="1.exe.config" size="187">
+  <file name="1.exe.config" size="182">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>+CM46OnHRrXZXNLMx7+U3V3iubiYL//d8hGOR13lDhU=</dsig:DigestValue>
+      <dsig:DigestValue>6yF81Kr/18DMcg6buS9ejUGZvWeN+ejf96BxgtNWgIE=</dsig:DigestValue>
     </hash>
   </file>
 </asmv1:assembly>
